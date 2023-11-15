@@ -3,18 +3,18 @@
 # KidsCanCode - Game Development with Pygame video series
 # Video link: https://youtu.be/OmlQ0XCvIn0 
 
-# game settings 
+# Game settings 
 WIDTH = 700
 HEIGHT = 400
 FPS = 30
 
-# player settings
+# Player settings
 PLAYER_JUMP = 23
 PLAYER_GRAV = 1.5
 global PLAYER_FRIC
 PLAYER_FRIC = 0.2
 
-# define colors
+# Define colors
 LIGHTWHITE = (227, 227, 227)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)

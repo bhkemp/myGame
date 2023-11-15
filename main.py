@@ -55,6 +55,7 @@ class Game:
         self.all_platforms = pg.sprite.Group()
         self.all_mobs = pg.sprite.Group()
         self.all_coins = pg.sprite.Group()
+        self.game_over = pg.sprite.Group()
         # Instantiate classes
         self.playerOne = Player(self)
         # self.playerTwo = PlayerTwo(self)
@@ -70,8 +71,8 @@ class Game:
             self.all_sprites.add(plat)
             self.all_platforms.add(plat)
 
-        # Generates mobs in a random range, one to eight
-        for m in range(0,7):
+        # Generates mobs!
+        for m in range(0,6):
             # Each mob has a separate position, randomly determined
             m = Mob(self, randint(0, WIDTH), randint(0, math.floor(HEIGHT/2)), 20, 20, "normal")
             self.all_sprites.add(m)
@@ -80,18 +81,22 @@ class Game:
         self.run()
     
     def run(self):
+        # Makes the game run, it's True!
         self.playing = True
         self.coin_spawn()
+        # Game loop
         while self.playing:
             self.clock.tick(FPS)
             self.events()
             self.update()
+            # Draw the game: text & images
             self.draw()
 
     def update(self):
         self.all_sprites.update()
 
     # I tried to add a gameover screen and reset button; it didn't work --> I'll solve it later
+    # UPDATE: I have a gameove screen, but no reset button!
 
     # def game_over(self):
     #     text = self.draw_text("Game Over", 30, WHITE, WIDTH/2, HEIGHT/10)
@@ -124,8 +129,8 @@ class Game:
             if self.playerOne.vel.y > 0:
                 self.playerOne.pos.y = hits[0].rect.top
                 self.playerOne.vel.y = 0
-                print(self.playerOne.vel.y)
-                print(self.playerOne.acc.y)
+                # print(self.playerOne.vel.y)
+                # print(self.playerOne.acc.y)
             elif self.playerOne.vel.y < 0:
                 self.playerOne.vel.y = -self.playerOne.vel.y
             
@@ -152,7 +157,8 @@ class Game:
             self.death_sound.play()
             # If you have 0 lives, reset the game.
             if self.playerOne.health == 0:
-                self.playing = False
+                self.game_over = True
+                pg.mixer.music.load(os.path.join(snd_folder, 'game_over_sound.mp3'))
                 # pg.quit()
 
         # More code for a second player:
@@ -189,11 +195,27 @@ class Game:
                     self.playing = False
                 self.running = False
 
+    def death_screen(self):
+        # Adds a delay of 2 seconds after final death
+        pg.time.delay(2000)
+        # clear screen
+        self.screen.fill(BLACK)
+        # sound that plays when you die
+        pg.mixer.music.play()
+        # Game over text
+        self.draw_text("SORRY- GAME OVER!", 80, WHITE, WIDTH / 2, HEIGHT / 2 - 50)
+        pg.display.flip()
+        # Adds a delay of 4 seconds after death screen
+        pg.time.delay(4000)
+        pg.quit()
+
     def draw(self):
         ############ Draw ################
         # draw the background screen
         self.screen.fill(BLACK)
         self.screen.blit(self.bgimage, (0,0))
+        if self.game_over == True:
+            self.death_screen()
         # draw all sprites
         self.all_sprites.draw(self.screen)
         self.draw_text("Health: " + str(self.playerOne.health), 35, BLACK, WIDTH/2 + 100, 370)
